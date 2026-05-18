@@ -1,0 +1,65 @@
+# ---- Build artefacts (rebuildable from source) ----
+**/bin/
+**/obj/
+src/OneSync.Installer/stage/
+src/OneSync.Installer/OneSync.msi
+src/OneSync.Installer/OneSync.wixpdb
+src/OneSync.ShellOverlay/x64/
+src/OneSync.ShellOverlay/.vs/
+
+# ---- Top-level disposable folders ----
+publish/
+dist/
+stage/
+
+# ---- Visual Studio noise ----
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---- Local deployment configs (never commit real tenant values) ----
+# The template at src/OneSync/config.template.json is the canonical config
+# shape that's safe to commit. The repo's config.json has placeholder GUIDs.
+# Any deployment-specific copies (config.live.json, config.production.json,
+# config.mytenant.json) are excluded from git so real credentials never
+# accidentally get committed.
+deploy/
+*.local.json
+config.*.json
+!config.template.json
+!src/OneSync/config.json
+
+# ---- Logs ----
+*.log
+src/**/*.log
+
+# ---- Backups (local rollback snapshots; large, not for git) ----
+backups/
+
+# ---- Historical planning docs (internal only, not for public repo) ----
+docs/superpowers/
+
+# ---- Dev-only in-progress backups of source files during refactors ----
+*.bak
+*.bak-*
+
+# ---- LiteDB / runtime state files (in case they ever land in repo by accident) ----
+*.db
+*.db-log
+
+# ---- OS / editor noise ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# ---- Test output / coverage ----
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
