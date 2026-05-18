@@ -127,5 +127,3 @@ Key choices:
 ## License
 
 [MIT](LICENSE). Use it, fork it, modify it, ship it. No warranty.
-
-See [BACKLOG.md](BACKLOG.md) for known limitations and planned work.

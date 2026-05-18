@@ -63,3 +63,6 @@ TestResults/
 coverage/
 *.coverage
 *.coveragexml
+
+# Internal backlog (not for public repo)
+BACKLOG.md
