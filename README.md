@@ -105,6 +105,15 @@ Yes. Each Windows user account gets its own per-user state in `%LOCALAPPDATA%\On
 **What happens to my files if I uninstall OneSync?**
 The cloud copy is untouched — OneSync never deletes anything from OneDrive or SharePoint on uninstall. Locally, hydrated files (anything you actually opened or saved) remain in `%LOCALAPPDATA%\OneSync\Drives\` so you don't lose offline work. Placeholders for files you never opened are removed because they were just pointers, not real content.
 
+**Will hydrated files eventually clog up the user's local disk?**
+No. OneSync has a background LRU eviction service. With defaults:
+- When local free space drops below **2 GB**, OneSync starts truncating the least-recently-used hydrated files back to 0-byte placeholders, until **4 GB** is free again.
+- Files accessed in the last **15 minutes** are exempt (so it never yanks a file you're actively editing).
+- The cloud copy is never touched — only the local cached bytes. Next time the user opens an evicted file, OneSync re-hydrates it transparently.
+- All thresholds are tunable in `config.json` (`evictionEnabled`, `evictionFreeSpaceThresholdGB`, `evictionTargetFreeSpaceGB`, `evictionMinAgeMinutes`).
+
+Without disk pressure, hydrated files stay forever — but growth is naturally bounded by what the user actually opens. Unlike OneDrive sync (which can pre-hydrate based on policy or "Always Keep on Device"), OneSync only ever puts bytes on disk when the user explicitly opens a file, so a typical staff member churns through a few hundred MB at most and the LRU never needs to fire.
+
 **Does this work behind a corporate proxy / TLS-inspecting firewall?**
 Yes, as long as the user's Windows account can reach `graph.microsoft.com` and `login.microsoftonline.com`. OneSync uses .NET's `HttpClient` which honours the system proxy settings (the same ones Edge / Office use). TLS inspection works fine provided the inspecting cert is trusted by the Windows cert store.
 
