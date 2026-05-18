@@ -66,3 +66,7 @@ coverage/
 
 # Internal backlog (not for public repo)
 BACKLOG.md
+
+# Source assets / dev measurements not for public repo
+Icon.png
+docs/measurements/
