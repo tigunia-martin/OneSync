@@ -1,6 +1,6 @@
 # OneSync
 
-A lightweight Windows drive-letter sync client for OneDrive and SharePoint, built for organisations (schools, in particular) that want file-server-style UX on top of Microsoft 365 without running the Microsoft OneDrive sync client.
+A lightweight Windows drive-letter sync client for OneDrive and SharePoint, built for organisations (schools, in particular) that want file-server-style UX on top of Microsoft 365 without running the Microsoft OneDrive sync client — and for those who don't want to pay for Cloud Drive Mapper, don't need an enterprise application solution, and want the features we've added on top (accurate folder sizes in Explorer, working image thumbnail previews, a live upload/sync widget, an in-app Recycle Bin viewer, and more).
 
 OneSync mounts OneDrive and SharePoint libraries as native Windows drive letters (e.g. `H:` for personal OneDrive, `I:` and `J:` for shared SharePoint libraries) using a user-mode filesystem driver. Files appear instantly as placeholders; the bytes are fetched only when the user opens them. Folder contents load on demand the first time a user navigates into them, so first-mount is cheap regardless of how big the underlying library is.
 
