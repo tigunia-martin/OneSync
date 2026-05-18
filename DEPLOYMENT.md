@@ -106,19 +106,36 @@ Deploy OneSync.msi via "Software Installation" GPO, then use Computer Configurat
 
 ## Tenant prep checklist
 
-Before deploying to users, ensure you have an Entra ID app registration set up:
+Before deploying to users, ensure you have an Entra ID app registration set up.
 
-1. **Entra admin centre** → App registrations → New registration
-2. Name it `OneSync` (or whatever you prefer), single-tenant
-3. **Authentication** → "Allow public client flows" → **Yes**
-4. **Authentication** → add redirect URI `https://login.microsoftonline.com/common/oauth2/nativeclient` (mobile/desktop apps)
-5. **API permissions** → add Microsoft Graph **delegated** permissions:
+> **Important: OneSync does NOT use a client secret.** It runs as a **public client** (desktop app) using MSAL's WAM broker for SSO. The signed-in Windows user authenticates with their own delegated permissions; there's no application secret stored in `config.json`, on the endpoint, or anywhere else. This is deliberate — distributing and rotating shared secrets to every endpoint is exactly the operational pain OneSync is designed to avoid.
+>
+> **Do not create a client secret or certificate on the OneSync app registration.** OneSync won't use it, and an unused secret on a public-client app is just an audit-finding waiting to happen.
+
+Steps:
+
+1. **Entra admin centre** → **App registrations** → **New registration**
+   - Name: `OneSync` (or whatever you prefer)
+   - Supported account types: **Accounts in this organisational directory only** (single tenant)
+   - Redirect URI: leave blank for now (set in step 4)
+2. **Authentication** → **Allow public client flows** → set to **Yes** → Save
+3. **Authentication** → **Add a platform** → **Mobile and desktop applications** → tick `https://login.microsoftonline.com/common/oauth2/nativeclient` → Configure
+4. **API permissions** → **Add a permission** → Microsoft Graph → **Delegated permissions**, add:
    - `Files.ReadWrite`
    - `Sites.ReadWrite.All`
    - `offline_access`
    - `User.Read`
-6. Grant admin consent
-7. Copy the **Application (client) ID** and **Directory (tenant) ID** into your `config.json`
+5. **Grant admin consent for <Tenant Name>** (button at the top of the permissions list)
+6. Copy the **Application (client) ID** and **Directory (tenant) ID** from the Overview tab into your `config.json`:
+   ```json
+   {
+     "tenantId": "<Directory (tenant) ID>",
+     "clientId": "<Application (client) ID>",
+     "authority": "https://login.microsoftonline.com/<Directory (tenant) ID>"
+   }
+   ```
+
+That's it. No certificate, no secret, no key vault. The first time a user runs OneSync, MSAL silently acquires a token via WAM (no popup on domain-joined machines) and caches it in `%LOCALAPPDATA%\OneSync\` encrypted with the user's DPAPI key.
 
 ## Update / upgrade
 

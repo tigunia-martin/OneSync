@@ -75,6 +75,8 @@ The minimum you have to set:
 
 The Entra app registration needs delegated permissions: `Files.ReadWrite`, `Sites.ReadWrite.All`, `offline_access`, `User.Read`, and must allow public client flows.
 
+**No client secret required.** OneSync runs as a public client (desktop app) using MSAL's WAM broker — the signed-in Windows user authenticates with their own delegated permissions, so there's no shared application secret to distribute to endpoints, store in config, or rotate. Don't create a client secret on the app registration; OneSync won't use it. Full setup steps in [DEPLOYMENT.md](DEPLOYMENT.md#tenant-prep-checklist).
+
 ## Security
 
 - All traffic goes over HTTPS to `graph.microsoft.com`.
