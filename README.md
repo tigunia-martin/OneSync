@@ -84,6 +84,29 @@ The Entra app registration needs delegated permissions: `Files.ReadWrite`, `Site
 - No telemetry. OneSync makes no outbound network requests other than to Microsoft Graph using the signed-in user's delegated permissions.
 - Found a security issue? See [SECURITY.md](SECURITY.md).
 
+## FAQ
+
+**Do I need to create a client secret in the Entra app registration?**
+No. OneSync is a **public client** (desktop app) using delegated permissions — the signed-in Windows user is the credential. Public clients can't store secrets securely, which is why the protocol doesn't use one. Most apps that talk to Graph from a *server* need a secret because they act as themselves; OneSync runs on the user's PC and acts as the user, which is a different auth pattern. Don't add a secret to the app registration — OneSync won't use it and it's a needless audit liability. Full step-by-step app-registration walkthrough is in [DEPLOYMENT.md](DEPLOYMENT.md#tenant-prep-checklist).
+
+**Why not just use the Microsoft OneDrive sync client?**
+OneDrive sync client puts your files in `%USERPROFILE%\OneDrive — TenantName`, not under a drive letter. It also doesn't expose shared SharePoint libraries as drive letters — you can sync individual libraries into folders, but each one is its own per-user setup. For schools coming from a file-server world where `H:`, `I:`, and `J:` mean specific things to every user, the mental-model mismatch is significant. OneSync mounts each library as a real drive letter, which Just Works for users.
+
+**Does OneSync send my files or any data anywhere besides Microsoft Graph?**
+No. There is no telemetry, no analytics, no crash reporting to anyone but the local crash log on the user's own machine. The only outbound network calls OneSync makes are to `graph.microsoft.com` and `login.microsoftonline.com`, both Microsoft endpoints, using the signed-in user's own delegated permissions.
+
+**Can I use OneSync on shared / multi-user machines (e.g. student lab PCs)?**
+Yes. Each Windows user account gets its own per-user state in `%LOCALAPPDATA%\OneSync\` — separate token cache, separate metadata cache, separate placeholder tree. Two students signing into the same machine see only their own OneDrive / SharePoint content.
+
+**What happens to my files if I uninstall OneSync?**
+The cloud copy is untouched — OneSync never deletes anything from OneDrive or SharePoint on uninstall. Locally, hydrated files (anything you actually opened or saved) remain in `%LOCALAPPDATA%\OneSync\Drives\` so you don't lose offline work. Placeholders for files you never opened are removed because they were just pointers, not real content.
+
+**Does this work behind a corporate proxy / TLS-inspecting firewall?**
+Yes, as long as the user's Windows account can reach `graph.microsoft.com` and `login.microsoftonline.com`. OneSync uses .NET's `HttpClient` which honours the system proxy settings (the same ones Edge / Office use). TLS inspection works fine provided the inspecting cert is trusted by the Windows cert store.
+
+**How do I update to a newer version?**
+Just run the new `OneSyncSetup.exe` — it does an MSI MajorUpgrade in place. User configuration, hydrated files, and pending uploads survive the upgrade.
+
 ## License
 
 [Freeware](LICENSE) — free for personal and commercial use, redistribute the unmodified installer, don't resell or repackage. Source code is not provided.
