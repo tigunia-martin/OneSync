@@ -4,6 +4,13 @@ A lightweight Windows drive-letter sync client for OneDrive and SharePoint, buil
 
 OneSync mounts OneDrive and SharePoint libraries as native Windows drive letters (e.g. `H:` for personal OneDrive, `I:` and `J:` for shared SharePoint libraries). Files appear instantly as placeholders; the bytes are fetched only when a user opens them. Folder contents load on demand the first time a user navigates into them, so first-mount is cheap regardless of how big the underlying library is.
 
+**Built to avoid Graph throttling.** OneSync is deliberately conservative with Microsoft Graph requests so that estate-wide deployments don't trip tenant-level rate limits:
+- **Token-bucket client-side rate limiting** caps each machine at 30 requests/second sustained, 60 burst (tunable). One runaway user can't starve the rest of the tenant.
+- **`?token=latest` bootstrap** skips the initial `/delta` walk that other sync clients use — first mount on a fresh machine fetches zero items, and content only appears as the user actually navigates into folders.
+- **Lazy folder enumeration** means a SharePoint library with 500k items costs *nothing* until a user clicks into it; only the folders they actually open hit Graph.
+- **Cooldown awareness** — if Graph does push back with a 429 / `Retry-After`, OneSync respects the backoff and pauses every drive on that machine until the cooldown lifts, surfaced in logs as structured events so IT can spot patterns.
+- **No initial-storm at logon.** 200 students logging in at 08:55 generates ~600 tiny token-establishment calls in 15 minutes (well under 1 req/s estate-wide), not the thousands-per-second storm a full enumeration would produce.
+
 ## Download
 
 Latest installer: see the [Releases page](../../releases). Three files are published with each release:
