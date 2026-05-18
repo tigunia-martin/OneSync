@@ -6,7 +6,15 @@ OneSync mounts OneDrive and SharePoint libraries as native Windows drive letters
 
 ## Download
 
-Latest installer: see the [Releases page](../../releases). Grab `OneSyncSetup.exe` and run it. The bundle handles the .NET 8 runtime, Dokan 2.x driver, and OneSync MSI in one shot. Requires local administrator rights (the Dokan filesystem driver is kernel-mode).
+Latest installer: see the [Releases page](../../releases). Three files are published with each release:
+
+- **`OneSyncSetup.exe`** — most users start here. One-shot bundle that brings the .NET 8 runtime, Dokan 2.x driver, and OneSync MSI.
+- **`OneSync.msi`** — for IT admins deploying via Intune / GPO / SCCM as a raw MSI. Install `Dokan_x64.msi` first.
+- **`Dokan_x64.msi`** — the Dokan user-mode filesystem driver. Required dependency for the standalone MSI; included in the bundle.
+
+Requires local administrator rights (the Dokan filesystem driver is kernel-mode).
+
+For unattended / fleet deployment with silent install switches and tenant configuration, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Inspiration & credits
 
