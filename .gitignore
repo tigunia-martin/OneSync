@@ -70,3 +70,6 @@ BACKLOG.md
 # Source assets / dev measurements not for public repo
 Icon.png
 docs/measurements/
+
+# Binary-only distribution: source not published
+src/
