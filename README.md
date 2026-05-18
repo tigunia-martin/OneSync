@@ -65,20 +65,22 @@ Most of these came from running similar tools in production at a single school a
 
 ## Configuration
 
-Configuration lives in `config.json` next to `OneSync.exe` (default: `C:\Program Files\OneSync\config.json`). [`config.template.json`](config.template.json) in this repo is a fully-commented reference of every setting.
+The installer drops a minimal `config.json` at `C:\Program Files\OneSync\config.json` with placeholder GUIDs. **Edit that file in place** — you only need to fill in `tenantId`, `clientId`, `authority`, and your drive list. Every other setting has a sensible default that doesn't need to appear in your config unless you want to override it.
 
-The minimum you have to set:
+Minimum viable config (about 15 lines):
 
 ```json
 {
-  "tenantId": "your-tenant-guid",
-  "clientId": "your-app-registration-guid",
+  "tenantId":  "your-tenant-guid",
+  "clientId":  "your-app-registration-guid",
   "authority": "https://login.microsoftonline.com/your-tenant-guid",
   "drives": [
     { "letter": "H", "label": "Home", "type": "onedrive", "remotePath": "/" }
   ]
 }
 ```
+
+The 266-line [`config.template.json`](config.template.json) in this repo is a reference doc that documents every available setting with comments — consult it when you want to tune something specific (rate limits, eviction thresholds, exclude patterns, etc.). You don't need to download it or copy it into your real config; the JSON loader supports `//` comments and trailing commas, so you can copy individual snippets from the template if you want to override a default.
 
 The Entra app registration needs delegated permissions: `Files.ReadWrite`, `Sites.ReadWrite.All`, `offline_access`, `User.Read`, and must allow public client flows.
 
