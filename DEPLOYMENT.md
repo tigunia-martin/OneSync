@@ -104,6 +104,30 @@ cmd.exe /c "OneSyncSetup.exe /install /quiet /norestart && copy /Y config.json \
 
 Deploy OneSync.msi via "Software Installation" GPO, then use Computer Configuration → Preferences → Windows Settings → Files to copy `config.json` to the install folder on next logon.
 
+## Office file associations (per-user, one-time)
+
+OneSync registers itself as the default app for `.docx` / `.xlsx` / `.pptx` at machine scope (HKCR) so that double-clicking an Office file inside a OneSync drive routes through OneSync's file handler — which in turn launches Word / Excel / PowerPoint with the file's SharePoint URL, lighting up native AutoSave and real-time co-authoring.
+
+**Fresh Windows profile that has never opened Office files:** the machine-wide registration wins. No user action required — double-click just works and AutoSave engages.
+
+**Existing profile where Word / Excel / PowerPoint have previously been opened:** Windows stores a per-user `UserChoice` key under `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.docx\UserChoice` that overrides the machine-wide default. Office's installer typically sets this on first run. Windows 10/11 blocks apps from writing `UserChoice` programmatically (anti-hijack protection — the key has a per-user hash that only Explorer can compute), so the OneSync installer **cannot** fix this for you. The user has to retarget the extensions once.
+
+Recommended rollout-email blurb to include with your deployment:
+
+> **Enabling AutoSave on your H:/I:/J: drives (one-off step)**
+>
+> The first time you open an Office file on a OneSync drive, you may notice AutoSave isn't switched on. To fix it:
+>
+> 1. Right-click any Word document inside H: (or whichever drive you use)
+> 2. Choose **Open with** → **Choose another app**
+> 3. Pick **OneSync** from the list
+> 4. Tick **"Always use this app to open .docx files"**
+> 5. Click **OK**
+>
+> Repeat once for an Excel file (`.xlsx`) and once for a PowerPoint file (`.pptx`). After that, every Office file on your OneSync drives opens with AutoSave and co-authoring enabled automatically.
+
+A future OneSync release may detect the shadowed `UserChoice` on first launch and pop a one-time helper dialog, but for now this needs to be a human step.
+
 ## Tenant prep checklist
 
 Before deploying to users, ensure you have an Entra ID app registration set up.

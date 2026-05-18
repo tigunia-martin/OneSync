@@ -49,7 +49,7 @@ Most of these came from running similar tools in production at a single school a
 - **Multi-library out of the box.** Mount any number of SharePoint document libraries alongside OneDrive without per-user sync-pair fiddling.
 - **Bounded local footprint.** Session-cache mode wipes the placeholder metadata on graceful shutdown so persistent staff profiles never accumulate gigabytes of sync state. Hydrated file content and pending uploads survive the wipe.
 - **Lazy-by-default.** No initial folder-walk storm at mount. Folder enumerations happen only when the user opens that folder. First-time login on a fresh machine costs a handful of small Graph requests, not thousands.
-- **Office co-authoring.** Double-clicking an Office document opens it directly via the SharePoint URL, so AutoSave and real-time co-authoring work the same as opening from the web.
+- **Office co-authoring.** Double-clicking an Office document opens it directly via the SharePoint URL, so AutoSave and real-time co-authoring work the same as opening from the web. (On existing user profiles where Word / Excel / PowerPoint are already the default app, you may need to set OneSync as the default for `.docx` / `.xlsx` / `.pptx` once — see the FAQ.)
 
 ## What it is not
 
@@ -97,6 +97,9 @@ The Entra app registration needs delegated permissions: `Files.ReadWrite`, `Site
 
 **Do I need to create a client secret in the Entra app registration?**
 No. OneSync is a **public client** (desktop app) using delegated permissions — the signed-in Windows user is the credential. Public clients can't store secrets securely, which is why the protocol doesn't use one. Most apps that talk to Graph from a *server* need a secret because they act as themselves; OneSync runs on the user's PC and acts as the user, which is a different auth pattern. Don't add a secret to the app registration — OneSync won't use it and it's a needless audit liability. Full step-by-step app-registration walkthrough is in [DEPLOYMENT.md](DEPLOYMENT.md#tenant-prep-checklist).
+
+**Office AutoSave / co-authoring isn't kicking in for my users — what gives?**
+Co-authoring and AutoSave only engage when an Office document opens via OneSync's file handler (which redirects it to the SharePoint URL). On a fresh Windows profile that's automatic — the installer registers OneSync as the default app for `.docx` / `.xlsx` / `.pptx` machine-wide. But on profiles where Word / Excel / PowerPoint have *already* been opened, Windows has stored a per-user "UserChoice" pointing at Office, and that overrides OneSync's machine-wide registration. (This is anti-hijack protection in Windows 10/11 — apps can't programmatically retarget the default for you.) Fix it once per user: right-click any Word document on a OneSync drive → **Open with** → **Choose another app** → pick **OneSync**, tick **"Always use this app to open .docx files"**, click **OK**. Repeat for an Excel and a PowerPoint file. After that, double-click works as documented and AutoSave engages on every subsequent open.
 
 **Why not just use the Microsoft OneDrive sync client?**
 Three things, in order of how much they bite at scale:
