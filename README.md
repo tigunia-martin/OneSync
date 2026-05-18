@@ -22,7 +22,6 @@ Most of these came from running similar tools in production at a single school a
 - **Live upload / sync status widget.** A floating tray modal shows in-progress uploads, deletes, and conflict resolutions with percentage and filename, so users can tell at a glance whether their save has actually made it to the cloud.
 - **Web Recycle Bin viewer.** Right-click the tray icon → "Recycle Bin" opens an in-app view of the OneDrive / SharePoint recycle bin so users can restore deleted files without leaving the desktop.
 - **Recycle-bin desktop icon stays clean.** The OneDrive Recycle Bin folder is excluded from the delta sync, so the local desktop Recycle Bin icon never flips to the "items present" state because of cloud-side deletes the user doesn't care about.
-- **Office co-authoring via direct SharePoint URLs.** Double-click a Word / Excel / PowerPoint file in Explorer and it opens with full AutoSave + real-time co-authoring, just like opening from the web.
 - **Cross-machine pending-upload notification.** If a staff member leaves work-in-progress on one PC and signs into another, a tray balloon on the new machine tells them which files are still pending on which device.
 
 ## Why OneSync instead of OneDrive sync client?
