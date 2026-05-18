@@ -4,6 +4,27 @@ A lightweight Windows drive-letter sync client for OneDrive and SharePoint, buil
 
 OneSync mounts OneDrive and SharePoint libraries as native Windows drive letters (e.g. `H:` for personal OneDrive, `I:` and `J:` for shared SharePoint libraries) using a user-mode filesystem driver. Files appear instantly as placeholders; the bytes are fetched only when the user opens them. Folder contents load on demand the first time a user navigates into them, so first-mount is cheap regardless of how big the underlying library is.
 
+## Inspiration & credits
+
+OneSync wouldn't exist without two commercial tools that pioneered the drive-letter-for-cloud-storage approach:
+
+- **[Cloud Drive Mapper](https://www.iamcloud.com/cloud-drive-mapper-overview/)** by IAMCloud — the gold standard in this space, particularly for large enterprise and multi-site education estates. If you're running thousands of seats across multiple tenants with complex governance requirements, their product is the right fit. Their work proved the model and shaped a lot of the UX expectations users now have.
+- **[ZeeDrive](https://www.zeedrive.com/)** — another well-built take on the same idea, lighter touch and great for smaller deployments.
+
+OneSync is an open-source alternative aimed at the gap between "I want this UX" and "I can justify a per-seat commercial licence." It's the right pick when your org is too small or budget-constrained for a paid product, but the OneDrive sync client is the wrong shape for your users.
+
+## What OneSync adds on top
+
+Most of these came from running similar tools in production at a single school and finding rough edges that mattered to end users. They're not criticisms of the commercial products — they're problems we hit and chose to spend time on:
+
+- **Accurate free-space in File Explorer.** Right-clicking a drive shows the real OneDrive / SharePoint quota and remaining bytes (refreshed periodically via Graph), not a synthetic placeholder. Users actually know when they're about to run out.
+- **Image thumbnail previews.** JPG / PNG / HEIC thumbnails render in Explorer the same way they do on a local disk, without the user having to open the file first.
+- **Live upload / sync status widget.** A floating tray modal shows in-progress uploads, deletes, and conflict resolutions with percentage and filename, so users can tell at a glance whether their save has actually made it to the cloud.
+- **Web Recycle Bin viewer.** Right-click the tray icon → "Recycle Bin" opens an in-app view of the OneDrive / SharePoint recycle bin so users can restore deleted files without leaving the desktop.
+- **Recycle-bin desktop icon stays clean.** The OneDrive Recycle Bin folder is excluded from the delta sync, so the local desktop Recycle Bin icon never flips to the "items present" state because of cloud-side deletes the user doesn't care about.
+- **Office co-authoring via direct SharePoint URLs.** Double-click a Word / Excel / PowerPoint file in Explorer and it opens with full AutoSave + real-time co-authoring, just like opening from the web.
+- **Cross-machine pending-upload notification.** If a staff member leaves work-in-progress on one PC and signs into another, a tray balloon on the new machine tells them which files are still pending on which device.
+
 ## Why OneSync instead of OneDrive sync client?
 
 - **Drive letters, not user-profile folders.** Network-drive style (`H:`, `I:`, `J:`) matches the mental model schools have used for decades. No retraining users to navigate `%USERPROFILE%\OneDrive — Tenant`.
@@ -107,9 +128,5 @@ Key choices:
 ## License
 
 [MIT](LICENSE). Use it, fork it, modify it, ship it. No warranty.
-
-## Status
-
-Used in production at a single school of ~600 students + staff. Active development; expect occasional breaking config-schema changes between minor versions until 2.0.
 
 See [BACKLOG.md](BACKLOG.md) for known limitations and planned work.
