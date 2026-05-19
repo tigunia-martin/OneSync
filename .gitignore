@@ -1,4 +1,4 @@
-# ---- Build artefacts (rebuildable from source) ----
+# Build artefacts
 **/bin/
 **/obj/
 src/OneSync.Installer/stage/
@@ -7,49 +7,41 @@ src/OneSync.Installer/OneSync.wixpdb
 src/OneSync.ShellOverlay/x64/
 src/OneSync.ShellOverlay/.vs/
 
-# ---- Top-level disposable folders ----
+# Disposable output folders
 publish/
 dist/
 stage/
 
-# ---- Visual Studio noise ----
+# Visual Studio noise
 .vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# ---- Local deployment configs (never commit real tenant values) ----
-# The template at src/OneSync/config.template.json is the canonical config
-# shape that's safe to commit. The repo's config.json has placeholder GUIDs.
-# Any deployment-specific copies (config.live.json, config.production.json,
-# config.mytenant.json) are excluded from git so real credentials never
-# accidentally get committed.
+# Deployment configs — never commit real tenant values. The template at
+# src/OneSync/config.template.json is the canonical shape that's safe to
+# commit; the repo's config.json has all-zero placeholder GUIDs.
 deploy/
 *.local.json
 config.*.json
 !config.template.json
 !src/OneSync/config.json
 
-# ---- Logs ----
+# Logs
 *.log
 src/**/*.log
 
-# ---- Backups (local rollback snapshots; large, not for git) ----
+# Local backups (rollback snapshots, in-progress refactor copies)
 backups/
-
-# ---- Historical planning docs (internal only, not for public repo) ----
-docs/superpowers/
-
-# ---- Dev-only in-progress backups of source files during refactors ----
 *.bak
 *.bak-*
 
-# ---- LiteDB / runtime state files (in case they ever land in repo by accident) ----
+# Runtime state (LiteDB files etc.)
 *.db
 *.db-log
 
-# ---- OS / editor noise ----
+# OS / editor noise
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -58,18 +50,17 @@ desktop.ini
 .vscode/
 .idea/
 
-# ---- Test output / coverage ----
+# Test output / coverage
 TestResults/
 coverage/
 *.coverage
 *.coveragexml
 
-# Internal backlog (not for public repo)
+# Local working files (notes, drafts, dev assets)
 BACKLOG.md
-
-# Source assets / dev measurements not for public repo
 Icon.png
+docs/superpowers/
 docs/measurements/
-
-# Binary-only distribution: source not published
-src/
+linkedin-post.txt
+reddit-post-*.txt
+reddit-strategy.txt
